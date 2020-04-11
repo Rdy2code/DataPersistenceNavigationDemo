@@ -10,8 +10,9 @@ import com.example.androiddata.utilities.FileHelper
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-class MainViewModel(app: Application) : AndroidViewModel(app) {
+public class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     //When ViewModel is initialized from the UI, it calls into the ViewModel and reads
     //the json file into memory. The json file can be stored in an assets folder or in the
@@ -29,7 +30,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun parseText (text: String) {
-        val moshi = Moshi.Builder().build()
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
         val adapter: JsonAdapter<List<Monster>> =
             moshi.adapter(listType)
         val monsterData = adapter.fromJson(text)
