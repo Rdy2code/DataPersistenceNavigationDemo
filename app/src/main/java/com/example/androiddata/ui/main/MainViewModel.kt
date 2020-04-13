@@ -3,9 +3,11 @@ package com.example.androiddata.ui.main
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.example.androiddata.LOG_TAG
 import com.example.androiddata.R
 import com.example.androiddata.data.Monster
+import com.example.androiddata.data.MonsterRepository
 import com.example.androiddata.utilities.FileHelper
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -14,31 +16,11 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 public class MainViewModel(app: Application) : AndroidViewModel(app) {
 
-    //When ViewModel is initialized from the UI, it calls into the ViewModel and reads
-    //the json file into memory. The json file can be stored in an assets folder or in the
-    //raw folder under resources.
+    //When ViewModel is initialized from the UI, it calls into the repository which does all of
+    // the data acquisition work
 
-    private val listType = Types.newParameterizedType(
-        List::class.java,
-        Monster::class.java
-    )
-
-    init {
-        //val text = FileHelper.getTextFromResources(app, R.raw.monster_data)
-        val text = FileHelper.getTextFromAssets(app, "monster_data.json")
-        parseText(text)
-    }
-
-    fun parseText (text: String) {
-        val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-        val adapter: JsonAdapter<List<Monster>> =
-            moshi.adapter(listType)
-        val monsterData = adapter.fromJson(text)
-        for (monster in monsterData ?: emptyList()) {
-            Log.i(LOG_TAG,
-            "${monster.monsterName} (\$${monster.price})")
-        }
-    }
+    //Instantiate the Repository
+    private val dataRepo = MonsterRepository(app)
+    //Get reference to LiveData object
+    val monsterData = dataRepo.monsterData
 }
