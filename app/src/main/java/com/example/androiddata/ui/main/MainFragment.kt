@@ -21,6 +21,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?): View {
 
+        //Call the ViewModel and subscribe to the LiveData
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.monsterData.observe(viewLifecycleOwner, Observer {
             for (monster in it) {
@@ -33,8 +34,6 @@ class MainFragment : Fragment() {
             for (monster in it ) {
                 monsterNames
                     .append(monster.monsterName)
-                    .append("\n")
-                    .append(monster.description)
                     .append("\n")
             }
             message.text = monsterNames

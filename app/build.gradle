@@ -37,7 +37,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
 
     //If using moshi explicitly on its own without retrofit
-    implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
+    //implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
 
 //  Retrofit dependencies and Kotlin coroutines for background service calls
     def retrofit2_version = "2.6.2"

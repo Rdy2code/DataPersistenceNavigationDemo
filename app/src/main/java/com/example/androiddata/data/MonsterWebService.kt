@@ -9,7 +9,6 @@ import retrofit2.http.GET
  */
 
 interface MonsterWebService {
-
     @GET("/feed/monster_data.json")
     suspend fun getMonsterData(): Response<List<Monster>>
 }

@@ -8,10 +8,10 @@ import com.squareup.moshi.JsonClass
 //@JsonClass(generateAdapter = true)
 data class Monster (
     //Use @Json annotation to define name in the json file. This lets you use any value name you want
-    @Json(name = "imageFile") val imageFile: String,
-    @Json(name = "monsterName") val monsterName: String,
-    @Json(name = "caption") val caption: String,
-    @Json(name = "description") val description: String,
-    @Json(name = "price") val price: Double,
-    @Json(name = "scariness") val scariness: Int
+    @field:Json(name="imageFile") val imageFile: String,
+    @field:Json(name="monsterName") val monsterName: String,
+    @field:Json(name="caption") val caption: String,
+    @field:Json(name="description") val description: String,
+    @field:Json(name="price") val price: Double,
+    @field:Json(name="scariness") val scariness: Int
 )
