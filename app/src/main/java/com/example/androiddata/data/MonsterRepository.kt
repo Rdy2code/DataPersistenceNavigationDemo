@@ -2,6 +2,7 @@ package com.example.androiddata.data
 
 import android.app.Application
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.androiddata.LOG_TAG
@@ -30,6 +31,7 @@ class MonsterRepository (val app: Application) {
     //Call the function when the class is instantiated
     init {
         getMonsterData()
+        networkAvailable()
     }
 
     fun getMonsterData() {
@@ -42,5 +44,14 @@ class MonsterRepository (val app: Application) {
             moshi.adapter(listType)
         monsterData.value =
             adapter.fromJson(text) ?: emptyList()    //Use ?: operator for 'else"
+    }
+
+    //Check network status
+    @Suppress("DEPRECATION")
+    private fun networkAvailable(): Boolean {
+        val connectivityManager =
+            app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo?.isConnectedOrConnecting ?: false
     }
 }
