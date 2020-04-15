@@ -1,5 +1,6 @@
 package com.example.androiddata.data
 
+import com.example.androiddata.IMAGE_BASE_URL
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -14,4 +15,10 @@ data class Monster (
     @field:Json(name="description") val description: String,
     @field:Json(name="price") val price: Double,
     @field:Json(name="scariness") val scariness: Int
-)
+) {
+    val imageUrl
+        get() = "$IMAGE_BASE_URL/$imageFile.webp"
+
+    val thumbnailUrl
+        get() = "$IMAGE_BASE_URL/${imageFile}_tn.webp"
+}

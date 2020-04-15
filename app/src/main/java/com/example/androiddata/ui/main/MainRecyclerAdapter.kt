@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.androiddata.R
 import com.example.androiddata.data.Monster
 
@@ -17,8 +18,8 @@ import com.example.androiddata.data.Monster
  */
 
 class MainRecyclerAdapter(val context: Context, val monsters: List<Monster>):
-RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>()
-{
+RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>() {
+
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val nameText = itemView.findViewById<TextView>(R.id.nameText)
         val monsterImage = itemView.findViewById<ImageView>(R.id.monsterImage)
@@ -43,6 +44,9 @@ RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>()
                 it.contentDescription = monster.monsterName
             }
             ratingBar?.rating = monster.scariness.toFloat()
+
+            //Glide will load the image once then cache it locally
+            Glide.with(context).load(monster.thumbnailUrl).into(monsterImage)
         }
     }
 }

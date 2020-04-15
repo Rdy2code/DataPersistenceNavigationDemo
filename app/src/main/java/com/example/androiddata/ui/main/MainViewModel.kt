@@ -13,4 +13,8 @@ public class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val dataRepo = MonsterRepository(app)
     //Get reference to LiveData object
     val monsterData = dataRepo.monsterData
+
+    fun refreshLayout() {
+        dataRepo.refreshData()
+    }
 }

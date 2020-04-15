@@ -3,8 +3,10 @@ package com.example.androiddata.data
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.MutableLiveData
+import com.example.androiddata.LOG_TAG
 import com.example.androiddata.WEB_SERVICE_URL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,9 +34,7 @@ class MonsterRepository (val app: Application) {
         //getMonsterData()
 
         //Put this in a coroutine on a background thread
-        CoroutineScope(Dispatchers.IO).launch {
-            callWebService()
-        }
+        refreshData()
     }
 
     //Use this function when parsing JSON explicitly with Moshi without retrofit
@@ -63,6 +63,7 @@ class MonsterRepository (val app: Application) {
     @WorkerThread
     suspend fun callWebService() {
         if (networkAvailable()) {
+            Log.i(LOG_TAG, "Calling web service")
             val retrofit = Retrofit.Builder()
                 .baseUrl(WEB_SERVICE_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
@@ -70,6 +71,12 @@ class MonsterRepository (val app: Application) {
             val service = retrofit.create(MonsterWebService::class.java)
             val serviceData = service.getMonsterData().body() ?: emptyList()
             monsterData.postValue(serviceData)
+        }
+    }
+
+    fun refreshData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            callWebService()
         }
     }
 }
