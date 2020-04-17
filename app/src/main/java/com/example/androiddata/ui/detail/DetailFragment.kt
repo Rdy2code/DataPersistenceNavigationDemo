@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.androiddata.LOG_TAG
 import com.example.androiddata.R
+import com.example.androiddata.databinding.FragmentDetailBinding
 import com.example.androiddata.ui.shared.SharedViewModel
 
 /**
@@ -39,13 +40,25 @@ class DetailFragment : Fragment() {
         setHasOptionsMenu(true)
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host)
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        //Set up an Observer to the SharedViewModel LiveData object
-        viewModel.selectedMonster.observe(viewLifecycleOwner, Observer {
-            Log.i(LOG_TAG, "Selected Monster: ${it.monsterName}")
-        })
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail, container, false)
+        //Since we are using the DataBinding library, we do not need the observer
+//        //Set up an Observer to the SharedViewModel LiveData object
+//        viewModel.selectedMonster.observe(viewLifecycleOwner, Observer {
+//            Log.i(LOG_TAG, "Selected Monster: ${it.monsterName}")
+//        })
+
+        //Create the bindings for the layout. The DataBinding class creates a new class with the name
+        //of the fragment. First inflate the layout
+        val binding = FragmentDetailBinding.inflate(inflater, container, false)
+        //Update the bindings on the fly
+        binding.lifecycleOwner = this
+        //Pass the data from the viewmodel to the binding
+        binding.viewModel = viewModel
+
+        //The individual views are available as children of the binding class
+        //binding.nameText.text
+
+        return binding.root
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
