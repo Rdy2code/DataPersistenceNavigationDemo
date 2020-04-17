@@ -30,6 +30,7 @@
                 tools:text="Mingle"/>
 
         <TextView
+                app:price="@{viewModel.selectedMonster.price}"
                 android:id="@+id/priceText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -48,6 +49,7 @@
                 android:text="Purchase"/>
 
         <ImageView
+                app:imageUrl="@{viewModel.selectedMonster.imageUrl}"
                 android:id="@+id/monsterImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -59,7 +61,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 tools:src="@drawable/monster01"
-                tools:contentDescription="Monster name"/>
+                tools:contentDescription="Monster name"
+                android:contentDescription="@string/monster_image" />
 
         <TextView
                 android:text="@{viewModel.selectedMonster.description}"

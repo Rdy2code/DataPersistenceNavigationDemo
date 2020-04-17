@@ -16,6 +16,7 @@ data class Monster (
     @field:Json(name="price") val price: Double,
     @field:Json(name="scariness") val scariness: Int
 ) {
+    //Read-only functions
     val imageUrl
         get() = "$IMAGE_BASE_URL/$imageFile.webp"
 
