@@ -1,16 +1,20 @@
-package com.example.androiddata.detail
+package com.example.androiddata.ui.detail
 
 import android.os.Bundle
-import android.service.autofill.Validators.and
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.androiddata.LOG_TAG
 import com.example.androiddata.R
+import com.example.androiddata.ui.shared.SharedViewModel
 
 /**
  * A simple [Fragment] subclass.
@@ -18,6 +22,7 @@ import com.example.androiddata.R
 class DetailFragment : Fragment() {
 
     private lateinit var navController: NavController
+    private lateinit var viewModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +38,11 @@ class DetailFragment : Fragment() {
         //Tell fragment to listen for touch events on the options menu
         setHasOptionsMenu(true)
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host)
+        viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        //Set up an Observer to the SharedViewModel LiveData object
+        viewModel.selectedMonster.observe(viewLifecycleOwner, Observer {
+            Log.i(LOG_TAG, "Selected Monster: ${it.monsterName}")
+        })
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_detail, container, false)

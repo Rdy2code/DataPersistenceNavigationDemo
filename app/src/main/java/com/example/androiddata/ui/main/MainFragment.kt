@@ -16,11 +16,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.androiddata.LOG_TAG
 import com.example.androiddata.R
 import com.example.androiddata.data.Monster
-import kotlinx.android.synthetic.main.main_fragment.*
+import com.example.androiddata.ui.shared.SharedViewModel
 
 class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: SharedViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeLayout: SwipeRefreshLayout
     private lateinit var navController: NavController
@@ -41,7 +41,7 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
         swipeLayout.setOnRefreshListener { viewModel.refreshLayout() }
 
         //Call the ViewModel and subscribe to the LiveData
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         viewModel.monsterData.observe(viewLifecycleOwner, Observer {
             val adapter = MainRecyclerAdapter(requireContext(), it, this)
             recyclerView.adapter = adapter
@@ -52,6 +52,11 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
 
     override fun onMonsterItemClick(monster: Monster) {
         Log.i(LOG_TAG, "Selected monster: ${monster.monsterName}")
+
+        //Store the monster item object that was clicked on in the SharedViewModel
+        viewModel.selectedMonster.value = monster
+
+        //navigate to the detail fragment
         navController.navigate(R.id.action_nav_detail)
     }
 }
