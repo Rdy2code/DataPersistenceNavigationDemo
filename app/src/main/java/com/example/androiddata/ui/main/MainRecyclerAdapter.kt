@@ -17,7 +17,10 @@ import com.example.androiddata.data.Monster
  * input arguments. Use 'val' keyword so they persist for the lifetime of the adapter
  */
 
-class MainRecyclerAdapter(val context: Context, val monsters: List<Monster>):
+class MainRecyclerAdapter(
+    val context: Context,
+    val monsters: List<Monster>,
+    val itemListener: MonsterItemListener):
 RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -47,6 +50,18 @@ RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>() {
 
             //Glide will load the image once then cache it locally
             Glide.with(context).load(monster.thumbnailUrl).into(monsterImage)
+
+            //Handle the click event. Attach the listener and send the object item to the Fragment
+            itemView.setOnClickListener{
+                itemListener.onMonsterItemClick(monster)
+            }
         }
+    }
+
+    /**
+     * Interface for communication with MainFragment
+     */
+    interface MonsterItemListener {
+        fun onMonsterItemClick(monster: Monster)
     }
 }
