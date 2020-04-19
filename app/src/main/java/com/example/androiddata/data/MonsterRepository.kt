@@ -8,6 +8,10 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.MutableLiveData
 import com.example.androiddata.LOG_TAG
 import com.example.androiddata.WEB_SERVICE_URL
+import com.example.androiddata.utilities.FileHelper
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,11 +28,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 class MonsterRepository (val app: Application) {
     val monsterData = MutableLiveData<List<Monster>>()
 
-//    private val listType = Types.newParameterizedType(
-//        List::class.java,
-//        Monster::class.java
-//    )
-
     //Call the function when the class is instantiated
     init {
         //getMonsterData()
@@ -42,9 +41,11 @@ class MonsterRepository (val app: Application) {
 //    fun getMonsterData() {
 //        //Receiving and acting on a context, then releasing it does not cause a resource leak
 //        val text = FileHelper.getTextFromAssets(app, "monster_data.json")
-//        val moshi = Moshi.Builder()
-//            .add(KotlinJsonAdapterFactory())
-//            .build()
+//        private val listType = Types.newParameterizedType(
+//        List::class.java,
+//        Monster::class.java
+//    )
+//        val moshi = Moshi.Builder().build()
 //        val adapter: JsonAdapter<List<Monster>> =
 //            moshi.adapter(listType)
 //        monsterData.value =
@@ -71,6 +72,8 @@ class MonsterRepository (val app: Application) {
             val service = retrofit.create(MonsterWebService::class.java)
             val serviceData = service.getMonsterData().body() ?: emptyList()
             monsterData.postValue(serviceData)
+            //Also save the data to cache
+            saveDataToCache(serviceData)
         }
     }
 
@@ -78,5 +81,14 @@ class MonsterRepository (val app: Application) {
         CoroutineScope(Dispatchers.IO).launch {
             callWebService()
         }
+    }
+
+    //Save data to an internal text file using Moshi. Read structured data into Json in memory
+    private fun saveDataToCache (monsterData: List<Monster>) {
+        val moshi = Moshi.Builder().build()
+        val listType = Types.newParameterizedType(List::class.java, Monster::class.java)
+        val adapter: JsonAdapter<List<Monster>> = moshi.adapter(listType)
+        val json = adapter.toJson(monsterData)
+        FileHelper.saveTextToFile(app, json)
     }
 }

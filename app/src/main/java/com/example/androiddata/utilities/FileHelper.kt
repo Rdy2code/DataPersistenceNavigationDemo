@@ -1,6 +1,8 @@
 package com.example.androiddata.utilities
 
+import android.app.Application
 import android.content.Context
+import java.io.File
 
 class FileHelper {
 
@@ -22,6 +24,13 @@ class FileHelper {
                     it.readText()
                 }
             }
+        }
+
+        fun saveTextToFile(app: Application, json: String?) {
+            //Use cacheDir instead of filesDir to save in cache, which will be cleaned up by the OS
+            //if the system runs low on memory
+            val file = File(app.filesDir, "monsters.json")  //location and name
+            file.writeText(json?: "", Charsets.UTF_8)
         }
     }
 }
