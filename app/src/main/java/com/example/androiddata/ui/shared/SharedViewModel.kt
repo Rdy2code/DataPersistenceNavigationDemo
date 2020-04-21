@@ -21,6 +21,6 @@ public class SharedViewModel(app: Application) : AndroidViewModel(app) {
     val selectedMonster = MutableLiveData<Monster>()
 
     fun refreshLayout() {
-        dataRepo.refreshData()
+        dataRepo.refreshDataFromWebService()
     }
 }

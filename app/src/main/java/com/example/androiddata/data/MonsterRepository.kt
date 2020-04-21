@@ -30,10 +30,17 @@ class MonsterRepository (val app: Application) {
 
     //Call the function when the class is instantiated
     init {
+        val data = readDataFromCache()
+        if (data.isNullOrEmpty()) {
+            refreshDataFromWebService()
+        } else {
+            monsterData.value = data
+            Log.i(LOG_TAG, "Using local data")
+        }
+
         //getMonsterData()
 
         //Put this in a coroutine on a background thread
-        refreshData()
     }
 
     //Use this function when parsing JSON explicitly with Moshi without retrofit
@@ -77,7 +84,7 @@ class MonsterRepository (val app: Application) {
         }
     }
 
-    fun refreshData() {
+    fun refreshDataFromWebService() {
         CoroutineScope(Dispatchers.IO).launch {
             callWebService()
         }
@@ -90,5 +97,17 @@ class MonsterRepository (val app: Application) {
         val adapter: JsonAdapter<List<Monster>> = moshi.adapter(listType)
         val json = adapter.toJson(monsterData)
         FileHelper.saveTextToFile(app, json)
+    }
+
+    //Access data in cach
+    private fun readDataFromCache(): List<Monster>? {
+        val json = FileHelper.readFromTextFile(app)
+        if (json == null) {
+            return emptyList()
+        }
+        val moshi = Moshi.Builder().build()
+        val listType = Types.newParameterizedType(List::class.java, Monster::class.java)
+        val adapter: JsonAdapter<List<Monster>> = moshi.adapter(listType)
+        return adapter.fromJson(json) ?: emptyList()
     }
 }

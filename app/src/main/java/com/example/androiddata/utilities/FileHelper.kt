@@ -26,11 +26,22 @@ class FileHelper {
             }
         }
 
+        //Write to files in internal storage
         fun saveTextToFile(app: Application, json: String?) {
             //Use cacheDir instead of filesDir to save in cache, which will be cleaned up by the OS
             //if the system runs low on memory
             val file = File(app.filesDir, "monsters.json")  //location and name
             file.writeText(json?: "", Charsets.UTF_8)
+        }
+
+        //Read from files in internal storage
+        fun readFromTextFile (app: Application): String? {
+            val file = File(app.filesDir, "monsters.json")
+            return if (file.exists()) {
+                file.readText()
+            } else {
+                null
+            }
         }
     }
 }
