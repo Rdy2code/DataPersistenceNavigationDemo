@@ -16,7 +16,7 @@ data class Monster (
     @field:Json(name="price") val price: Double,
     @field:Json(name="scariness") val scariness: Int
 ) {
-    //Read-only functions
+    //Read-only functions where getter calculates the location on the website
     val imageUrl
         get() = "$IMAGE_BASE_URL/$imageFile.webp"
 

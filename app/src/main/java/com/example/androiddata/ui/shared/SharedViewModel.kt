@@ -13,9 +13,11 @@ public class SharedViewModel(app: Application) : AndroidViewModel(app) {
 
     //Instantiate the Repository
     private val dataRepo = MonsterRepository(app)
-    //Get reference to LiveData object
+
+    //Get reference to LiveData object. This is the data we need for the detail fragment UI
     val monsterData = dataRepo.monsterData
 
+    //Create LiveData object that contains instance of Monster class as shareable between fragments
     val selectedMonster = MutableLiveData<Monster>()
 
     fun refreshLayout() {

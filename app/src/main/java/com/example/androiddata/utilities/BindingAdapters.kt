@@ -7,7 +7,8 @@ import com.bumptech.glide.Glide
 import java.text.NumberFormat
 
 //Complete binding adapter for an image. This can be called from anywhere in the application
-//and is identified by the string 'imageUrl'
+//and is identified by the string 'imageUrl'. Then define a function for image loading.
+//Here we have simply used the Glide logic to load.
 @BindingAdapter("imageUrl")
 fun loadImage(view: ImageView, imageUrl: String) {
     Glide.with(view.context).load(imageUrl).into(view)
