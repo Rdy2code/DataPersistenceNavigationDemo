@@ -88,29 +88,4 @@ class MonsterRepository (val app: Application) {
             callWebService()
         }
     }
-
-    //Save data to an internal text file using Moshi. Read structured data into Json in memory
-    private fun saveDataToCache (monsterData: List<Monster>) {
-        if (ContextCompat.checkSelfPermission(
-                app, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            == PackageManager.PERMISSION_GRANTED) {
-            val moshi = Moshi.Builder().build()
-            val listType = Types.newParameterizedType(List::class.java, Monster::class.java)
-            val adapter: JsonAdapter<List<Monster>> = moshi.adapter(listType)
-            val json = adapter.toJson(monsterData)
-            FileHelper.saveTextToFile(app, json)
-        }
-    }
-
-    //Access data in cach
-    private fun readDataFromCache(): List<Monster>? {
-        val json = FileHelper.readFromTextFile(app)
-        if (json == null) {
-            return emptyList()
-        }
-        val moshi = Moshi.Builder().build()
-        val listType = Types.newParameterizedType(List::class.java, Monster::class.java)
-        val adapter: JsonAdapter<List<Monster>> = moshi.adapter(listType)
-        return adapter.fromJson(json) ?: emptyList()
-    }
 }
