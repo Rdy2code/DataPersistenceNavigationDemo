@@ -1,21 +1,26 @@
 package com.example.androiddata.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.androiddata.IMAGE_BASE_URL
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 
-//Class properties must match the fields in the json file
+/**
+ * Data entity class that defines the SQLite database via Room
+ */
 
-//@JsonClass(generateAdapter = true)
+@Entity(tableName = "monster")
 data class Monster (
-    //Use @Json annotation to define name in the json file. This lets you use any value name you want
-    @field:Json(name="imageFile") val imageFile: String,
-    @field:Json(name="monsterName") val monsterName: String,
-    @field:Json(name="caption") val caption: String,
-    @field:Json(name="description") val description: String,
-    @field:Json(name="price") val price: Double,
-    @field:Json(name="scariness") val scariness: Int
-) {
+    @PrimaryKey(autoGenerate = true)
+    val monsterId: Int,
+    val imageFile: String,
+    val monsterName: String,
+    val caption: String,
+    val description: String,
+    val price: Double,
+    val scariness: Int)
+
+{
     //Read-only functions where getter calculates the location on the website
     val imageUrl
         get() = "$IMAGE_BASE_URL/$imageFile.webp"

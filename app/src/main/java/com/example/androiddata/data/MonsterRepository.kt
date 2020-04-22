@@ -1,10 +1,14 @@
 package com.example.androiddata.data
 
+import android.Manifest
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.WorkerThread
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.example.androiddata.LOG_TAG
 import com.example.androiddata.WEB_SERVICE_URL
@@ -15,9 +19,9 @@ import com.squareup.moshi.Types
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-
 
 /**
  * Retrieves data from an assets file, parses the JSON into a list of model objects, and
@@ -26,38 +30,29 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 //Use an application reference not an Activity context
 class MonsterRepository (val app: Application) {
+
     val monsterData = MutableLiveData<List<Monster>>()
 
+    //Call the static method in the database with app as context then get an instance of the
+    //Dao
+    private val monsterDao = MonsterDatabase.getDatabase(app).monsterDao()
+
     //Call the function when the class is instantiated
+    //Create a coroutine so database access can be done in a background thread
     init {
-        val data = readDataFromCache()
-        if (data.isNullOrEmpty()) {
-            refreshDataFromWebService()
-        } else {
-            monsterData.value = data
-            Log.i(LOG_TAG, "Using local data")
+        CoroutineScope(Dispatchers.IO).launch {
+            val data = monsterDao.getAll()
+            if (data.isEmpty()) {
+                callWebService()
+            } else {
+                monsterData.postValue(data)
+                //Switch to the main thread to notify user that database is being used
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(app, "Using local data", Toast.LENGTH_LONG).show()
+                }
+            }
         }
-
-        //getMonsterData()
-
-        //Put this in a coroutine on a background thread
     }
-
-    //Use this function when parsing JSON explicitly with Moshi without retrofit
-
-//    fun getMonsterData() {
-//        //Receiving and acting on a context, then releasing it does not cause a resource leak
-//        val text = FileHelper.getTextFromAssets(app, "monster_data.json")
-//        private val listType = Types.newParameterizedType(
-//        List::class.java,
-//        Monster::class.java
-//    )
-//        val moshi = Moshi.Builder().build()
-//        val adapter: JsonAdapter<List<Monster>> =
-//            moshi.adapter(listType)
-//        monsterData.value =
-//            adapter.fromJson(text) ?: emptyList()    //Use ?: operator for 'else"
-//    }
 
     //Check network status
     @Suppress("DEPRECATION")
@@ -68,9 +63,12 @@ class MonsterRepository (val app: Application) {
         return networkInfo?.isConnectedOrConnecting ?: false
     }
 
+    //Calling a function with suspend keyword means it must be called inside a coroutine
     @WorkerThread
     suspend fun callWebService() {
         if (networkAvailable()) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(app, "Using web service", Toast.LENGTH_LONG).show()}
             Log.i(LOG_TAG, "Calling web service")
             val retrofit = Retrofit.Builder()
                 .baseUrl(WEB_SERVICE_URL)
@@ -79,8 +77,9 @@ class MonsterRepository (val app: Application) {
             val service = retrofit.create(MonsterWebService::class.java)
             val serviceData = service.getMonsterData().body() ?: emptyList()
             monsterData.postValue(serviceData)
-            //Also save the data to cache
-            saveDataToCache(serviceData)
+            //Clear the table and repopulate with most current data from web service
+            monsterDao.deleteAll()
+            monsterDao.insertMonsters(serviceData)
         }
     }
 
@@ -92,11 +91,15 @@ class MonsterRepository (val app: Application) {
 
     //Save data to an internal text file using Moshi. Read structured data into Json in memory
     private fun saveDataToCache (monsterData: List<Monster>) {
-        val moshi = Moshi.Builder().build()
-        val listType = Types.newParameterizedType(List::class.java, Monster::class.java)
-        val adapter: JsonAdapter<List<Monster>> = moshi.adapter(listType)
-        val json = adapter.toJson(monsterData)
-        FileHelper.saveTextToFile(app, json)
+        if (ContextCompat.checkSelfPermission(
+                app, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED) {
+            val moshi = Moshi.Builder().build()
+            val listType = Types.newParameterizedType(List::class.java, Monster::class.java)
+            val adapter: JsonAdapter<List<Monster>> = moshi.adapter(listType)
+            val json = adapter.toJson(monsterData)
+            FileHelper.saveTextToFile(app, json)
+        }
     }
 
     //Access data in cach
