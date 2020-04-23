@@ -7,7 +7,7 @@ import androidx.room.Query
 @Dao
 interface MonsterDao {
     @Query("SELECT * FROM monster")
-    fun getAll(): List<Monster>
+    suspend fun getAll(): List<Monster>
 
     @Insert
     suspend fun insertMonster(monster: Monster)
