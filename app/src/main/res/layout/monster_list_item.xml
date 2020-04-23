@@ -16,22 +16,26 @@
             android:id="@+id/nameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginStart="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="221dp"
+            app:layout_constraintBottom_toBottomOf="@+id/monsterImage"
+            app:layout_constraintStart_toEndOf="@+id/monsterImage"
+            app:layout_constraintTop_toTopOf="@+id/monsterImage"
             tools:text="Mingle" />
 
     <ImageView
             android:id="@+id/monsterImage"
-            android:layout_width="221dp"
+            android:layout_width="50dp"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
+            android:layout_margin="8dp"
+            android:contentDescription="@string/monster_image_description"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:contentDescription="Mingle"
-            tools:ignore="HardcodedText"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="16dp"
             tools:srcCompat="@drawable/monster01" />
 
     <RatingBar
@@ -39,10 +43,10 @@
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:isIndicator="true"
             app:layout_constraintBottom_toBottomOf="@+id/nameText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/nameText"
             app:layout_constraintTop_toTopOf="@+id/nameText" />
 
 
