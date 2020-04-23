@@ -2,9 +2,7 @@ package com.example.androiddata.ui.main
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -58,5 +56,23 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
 
         //navigate to the detail fragment
         navController.navigate(R.id.action_nav_detail)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.options_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_view_grid -> {
+
+            }
+
+            R.id.action_view_list -> {
+
+            }
+        }
+        return true
     }
 }
