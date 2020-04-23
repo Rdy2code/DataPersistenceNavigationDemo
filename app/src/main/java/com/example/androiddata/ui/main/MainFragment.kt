@@ -32,6 +32,8 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
 
+        setHasOptionsMenu(true)
+
         val view = inflater.inflate(R.layout.main_fragment, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host)
@@ -66,11 +68,12 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_view_grid -> {
+                true
 
             }
 
             R.id.action_view_list -> {
-
+                true
             }
         }
         return true
