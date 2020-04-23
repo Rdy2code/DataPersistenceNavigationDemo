@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.androiddata.R
 import com.example.androiddata.data.Monster
+import com.example.androiddata.utilities.PrefsHelper
 
 /**
  * Set constructor arguments in class declaration signature. So include parens with
@@ -31,7 +32,18 @@ RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.monster_grid_item, parent, false)
+
+        //Get the type of layout from the shared preferences file
+        //Will need similar code in MainFragment to ensure the layout starts up with the user's
+        //previous choice
+        val layoutStyle = PrefsHelper.getItemType(parent.context)
+        val layoutId = if (layoutStyle == "grid") {
+            R.layout.monster_grid_item
+        } else {
+            R.layout.monster_list_item
+        }
+
+        val view = inflater.inflate(layoutId, parent, false)
         return ViewHolder(view)
     }
 

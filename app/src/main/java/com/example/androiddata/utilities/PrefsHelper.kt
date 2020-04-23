@@ -2,8 +2,7 @@ package com.example.androiddata.utilities
 
 import android.content.Context
 import android.content.SharedPreferences
-
-const val ITEM_TYPE_KEY = "item_type_key"
+import com.example.androiddata.ITEM_TYPE_KEY
 
 class PrefsHelper {
 
@@ -12,7 +11,6 @@ class PrefsHelper {
             context.getSharedPreferences("default", 0)
 
         fun setItemType (context: Context, type: String) {
-
             //Get instantiate the preferences object/file, in edit mode add
             //the key value pair
             preferences(context)

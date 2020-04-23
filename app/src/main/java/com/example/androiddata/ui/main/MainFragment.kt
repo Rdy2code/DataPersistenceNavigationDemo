@@ -9,15 +9,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.androiddata.LOG_TAG
 import com.example.androiddata.R
 import com.example.androiddata.data.Monster
 import com.example.androiddata.ui.shared.SharedViewModel
+import com.example.androiddata.utilities.PrefsHelper
 
 class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
 
+    private lateinit var adapter: MainRecyclerAdapter
     private lateinit var viewModel: SharedViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeLayout: SwipeRefreshLayout
@@ -36,6 +40,16 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
 
         val view = inflater.inflate(R.layout.main_fragment, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
+
+        //Set the layout according to the settings in the SharedPreferences file
+        val layoutStyle = PrefsHelper.getItemType(requireContext())
+        recyclerView.layoutManager =
+            if (layoutStyle == "grid") {
+                GridLayoutManager(requireContext(), 2)
+            } else {
+                LinearLayoutManager(requireContext())
+            }
+
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host)
         swipeLayout = view.findViewById(R.id.swipeLayout)
         swipeLayout.setOnRefreshListener { viewModel.refreshLayout() }
@@ -43,7 +57,7 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
         //Call the ViewModel and subscribe to the LiveData
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         viewModel.monsterData.observe(viewLifecycleOwner, Observer {
-            val adapter = MainRecyclerAdapter(requireContext(), it, this)
+            adapter = MainRecyclerAdapter(requireContext(), it, this)
             recyclerView.adapter = adapter
             swipeLayout.isRefreshing = false
         })
@@ -68,12 +82,21 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_view_grid -> {
-                true
+                //Write to the SharedPreferences
+                PrefsHelper.setItemType(requireContext(), "grid")
+                //Reset the RecyclerView Layout
+                recyclerView.layoutManager =
+                    GridLayoutManager(requireContext(), 2)
+                //Rebuild the adapter with this new RecyclerView Layout
+                recyclerView.adapter = adapter
 
             }
 
             R.id.action_view_list -> {
-                true
+                PrefsHelper.setItemType(requireContext(), "list")
+                recyclerView.layoutManager =
+                    LinearLayoutManager(requireContext())
+                recyclerView.adapter = adapter
             }
         }
         return true
