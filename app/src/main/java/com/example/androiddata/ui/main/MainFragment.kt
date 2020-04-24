@@ -50,6 +50,7 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
                 LinearLayoutManager(requireContext())
             }
 
+        //Supply id of fragment container in the main_activity layout
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host)
         swipeLayout = view.findViewById(R.id.swipeLayout)
         swipeLayout.setOnRefreshListener { viewModel.refreshLayout() }
@@ -60,6 +61,11 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
             adapter = MainRecyclerAdapter(requireContext(), it, this)
             recyclerView.adapter = adapter
             swipeLayout.isRefreshing = false
+        })
+        viewModel.activityTitle.observe(viewLifecycleOwner, Observer {
+            //Set the title of the Activity to the value of the mutable live data object
+            //that is passed into the observer function
+            requireActivity().title = it
         })
         return view
     }
@@ -91,14 +97,21 @@ class MainFragment : Fragment(), MainRecyclerAdapter.MonsterItemListener {
                 recyclerView.adapter = adapter
 
             }
-
             R.id.action_view_list -> {
                 PrefsHelper.setItemType(requireContext(), "list")
                 recyclerView.layoutManager =
                     LinearLayoutManager(requireContext())
                 recyclerView.adapter = adapter
             }
+            R.id.action_settings -> {
+                navController.navigate(R.id.settingsActivity)
+            }
         }
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateActivityTitle()
     }
 }
